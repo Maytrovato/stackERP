@@ -9,7 +9,7 @@ class Configuraciones extends CI_Controller {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model("Configuraciones");
+		$this->load->model("Configuraciones_m");
 		$this->load->helper(array('form', 'url'));		
 	}
 
@@ -23,5 +23,11 @@ class Configuraciones extends CI_Controller {
 	{		
 		$this->load->view("header");
 		$this->load->view('configuraciones/usuarios');
+	}
+
+	public function permisos()
+	{		
+		$this->load->view("header");
+		$this->load->view('configuraciones/permisos');
 	}
 }

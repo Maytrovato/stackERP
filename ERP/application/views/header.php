@@ -107,8 +107,8 @@
 		]},
 		
 		{id: "configuraciones", icon: "gears", value:"Configuraciones", data:[
-			{ id: "conf_usuarios", value: "Usuarios"}, 
-			{ id: "permisos", value: "Permisos"}, 
+			{ id: "conf_usuarios", value: "Usuarios", href:"<?= base_url('configuraciones/usuarios');?>"}, 
+			{ id: "permisos", value: "Permisos", href:"<?= base_url('configuraciones/permisos');?>"}, 
 			{ id: "lenguaje", value: "Lenguaje"}, 
 			{ id: "manual", value: "Manual de usuario"}, 
 		]}
@@ -199,7 +199,7 @@
 									var selection = this.getItem(id);	
 									if (selection.href) 
 									{
-										//document.location=selection.href;
+										document.location=selection.href;
 									}						
 								}
 							} 
