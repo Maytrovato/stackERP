@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -69,7 +69,7 @@
 			{ id: "con_estadisticas", value: "Estadisticas"},
 		]},
 		{id: "produccion", icon: "area-chart", value:"Producción", data:[
-			{ id: "servicios", value: "Servicios"},
+			{ id: "servicios", value: "Servicios", href:"<?= base_url('produccion/servicios');?>"},
 			{ id: "productos", value: "Productos"},
 			{ id: "almacen", value: "Almacen"},
 			{ id: "p_reportes", value: "Reportes"},
