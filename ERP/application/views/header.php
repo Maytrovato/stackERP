@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Stack ERP</title>
+	<link rel="icon" type="image/png" href="<?= base_url('assets/imgs/logo_stack.png')?>">
 
 	<link rel="stylesheet" type="text/css" href="<?= base_url()?>assets/webix.css">
 	<link rel="stylesheet" type="text/css" href="<?= base_url()?>assets/css/sidebar.css">
@@ -14,6 +15,13 @@
 	<!--<script src="<?=base_url()?>assets/JS/menu.js"></script>-->
 
 	<style type="text/css">
+
+		body
+		{
+			width: 100%;
+			height: 100%;
+		}
+
 		.logo
 		{
 			width: 75px;
@@ -180,7 +188,7 @@
 						{
 							view: "sidebar",
 							data: menu_data,	
-							height: "auto",
+							
 							collapsed: false,
 							animate: {type:"flip", subtype:"vertical"},
 
@@ -214,16 +222,14 @@
 								}
 							} */
 						},
-						{
+						{		                   
+							view: "template",								
+							//template: "html->workplace",
+							content: "workplace", 
+							scroll: true
 
 
-							rows: [
-							{
-								view: "template",
-								content: "workplace",								
-							}, 
-							
-							] 
+							 
 													
 						} 
 					]
