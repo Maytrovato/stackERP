@@ -35,6 +35,12 @@ class Configuraciones_m extends CI_Model
 		return $this->db->get()->result();
 	}  */
 
+	public function insertar_Usuario($data)
+	{
+		$this->db->insert('usuarios',$data);
+		return $this->db->insert_id();
+	}
+
 
 	function traer_Usuarios()
 	{

@@ -27,22 +27,28 @@ class Configuraciones extends CI_Controller
 		$data["empleados"] = json_encode($this->configuraciones_m->traer_Empleados());
 		$data["perfiles"] = json_encode($this->configuraciones_m->traer_Perfiles());
 
-	//echo "<prev>";
-		//print_r( $data["perfiles"]);
-
 		$this->load->view("header");
 		$this->load->view('configuraciones/usuarios', $data);
 	}
 
 	// FUNCIÓN PARA LLENAR LA TABLA CON LOS USUARIOS
-	public function getUsuarios()
+	public function get_Usuarios()
 	{
 		echo json_encode($this->configuraciones_m->traer_Usuarios());
 	}
 
-	public function getPerfiles()
+
+	public function nuevo_Usuario()
 	{
-		echo json_encode($this->configuraciones_m->traer_Perfiles());		
+
+		$data = array('id_empleado'=> $this->input->post("empleado"),
+					  'id_perfil' => $this->input->post("perfil"),
+					  'id_sucursal' => $this->input->post("sucursal"),
+					  'username' => $this->input->post("username"), 
+					  'password' => md5($this->input->post("password1"))
+			);
+
+		echo json_encode($this->configuraciones_m->insertar_Usuario($data));
 	}
 
 

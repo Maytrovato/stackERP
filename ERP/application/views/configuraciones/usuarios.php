@@ -3,7 +3,8 @@
 		
 		<h1>Usuarios</h1>
 		
-		<div id="table_usuarios"> </div>
+		<div id="opciones"></div>
+		<div id="table_usuarios"></div>
 		<div id="configurar_usuario" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
 		<div id="cambiar_contraseña" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
 		
@@ -17,38 +18,61 @@
 		webix.markup.init();
 
 
-		var perfiles = "<?= base_url('configuraciones/getPerfiles')?>";
-		var perfiles2 = <?= $perfiles?>;
-		//console.log(perfiles);
-		//alert(perfiles);
+		//var perfiles = "<?= base_url('configuraciones/getPerfiles')?>";
+		var perfiles = <?= $perfiles?>;
 
-		var per = [
-			{id: "1", value:"Administrador"},
-			{id: "2", value:"Gerente"},
-			{id: "3", value:"Empleado"},
-		];
 
-		var usu = [
-			{id: "1", value:"maytro"},
-			{id: "2", value:"kim"},
-			{id: "3", value:"igno"},
-			{id: "4", value:"castro"},
-		];
+
+		// OPCIONES DE AGREGAR USUARIOS
+		webix.ui(
+		{
+			container: "opciones",
+			cols: [
+			{},
+			{
+				view: "button", 
+				label: "Agregar usuario",
+				width: 150, 
+				type: "iconButton",
+				icon: "user-plus",
+				click: function()
+				{
+					$$("window_config").show();
+				}
+				
+			},
+			{
+				view: "button", 
+				id: "button_change_pass",
+				label: "Cambiar contraseña",
+				width: 180, 
+				disabled : true,
+				type: "iconButton",
+				icon: "lock",
+				click: function()
+				{	
+					$$("window_change").show();
+				}
+				
+			},
+
+			]
+		}); // FIN DE OPCIONES DE AGREGAR USUARIOS
+
 		
 
-		var sucu = [
-			{id:"1", value: "1"}, 
-			{id:"2", value: "2"}, 
-			{id:"3", value: "3"}, 
-			{id:"4", value: "4"}
-		];
 
 
 
+
+
+
+		// TABLA DE USUARIOS
 		tabla_usuarios = webix.ui(
 		{
-			container: "table_usuarios",
 			view: "datatable",
+			id: "table_usuarios",
+			container: "table_usuarios",
 			select:"row",
 			editable:true,
 			editaction:"dblclick",
@@ -58,57 +82,77 @@
 			{ id: "Empleado", header: ["Empleado", {content:"textFilter"}], width: 200, fillspace: true},
 			{ id: "Usuario", editor:"popup", header: ["Usuario", {content:"textFilter"}], width: 200, fillspace: true},
 			//{ id: "Usuario", editor:"richselect", options: usu, header: ["Usuario", {content:"textFilter"}], width: 200, fillspace: true},
-			{ id: "Perfil", editor:"richselect", options: perfiles2, header: ["Perfil", {content:"selectFilter"}], width: 200},
-			{ id: "Sucursal", editor:"richselect", collection: sucu, header: ["Sucursal", {content:"selectFilter"}], width: 200, fillspace: true },
-			{ id: "Estado", editor:"richselect", collection: ["0","1"], header: ["Estado", {content: "selectFilter"}], width: 100}
+			{ id: "Perfil", editor:"richselect", options: perfiles, header: ["Perfil", {content:"selectFilter"}], width: 200},
+			{ id: "Sucursal",  header: ["Sucursal", {content:"selectFilter"}], width: 200, fillspace: true },
+			{ id: "Estado", editor:"richselect", options:  ["0","1"], header: ["Estado", {content: "selectFilter"}], width: 100}
 			],
 			on:{
 					onSelectChange:function(){
 						var text = "Selected: "+tabla_usuarios.getSelectedId(true).join();
+						$$("button_change_pass").enable();
 						webix.message(text);
 					}
 				},
-				
+			url: "<?= base_url('configuraciones/get_Usuarios');?>"
+		}); // FIN DE TABLA USUARIOS
 
-			url: "<?= base_url('configuraciones/getUsuarios');?>"
-		});
+
 
 
 
 		// FORM CONFIGURAR USUARIO
-		webix.ui(
-		{	
-			hidden: false	,
+		var form_configurar = {	
+			id: "form_configurar_usuario",
+			//hidden: true,
 			view: "form",
-			container: "configurar_usuario",
+			//container: "configurar_usuario",
 			width:500,
-			rows:[
-			{
-				view:"label", label:"<b>Configurar usuario</b>"
-			},
+			rows:[			
 			{
 				view:"combo", 
 				label: "Empleado",				
 				name:"empleado",
-				placeholder: "Busque un empleado",
-				options: <?= $empleados?>
+				labelWidth: 90,
+				placeholder: "Escriba o seleccione un empleado",
+				invalidMessage: "Debe seleccionar un empleado",
+				required: true,
+				validateEvent:"blur",
+				options: <?= $empleados?>,
+				on: 
+				{
+					'onChange':function(id)
+					{
+						webix.message(this.getValue());
+					}
+				}
 			},
 			{
 				view:"richselect", 
 				label: "Perfil",
+				labelWidth: 90,
 				name:"perfil",
-				value:1, 
-				options:[ 
-					{ id:1, value:"Banana" },
-					{ id:2, value:"Papaya" }, 
-					{ id:3, value:"Apple" }
-				]
+				placeholder: "Seleccione un perfil de usuario",
+				invalidMessage: "Debe seleccionar un perfil",
+				required: true,
+				validateEvent:"blur",
+				options: <?= $perfiles?>,
+				on: 
+				{
+					'onChange':function(id)
+					{
+						webix.message(this.getValue());
+					}
+				}
 			},
 			{
 				view:"richselect", 
 				label: "Sucursal",
+				labelWidth: 90,
 				name:"sucursal",
-				value:1, 
+				placeholder: "Seleccione una sucursal",
+				invalidMessage: "Debe seleccionar una sucursal",
+				required: true,
+				validateEvent:"blur",
 				options:[ 
 					{ id:1, value:"Banana" },
 					{ id:2, value:"Papaya" }, 
@@ -118,40 +162,90 @@
 			{
 				view:"text", 
 				label: "Usuario",
-				name:"usuario",	
-				placeholder: "Escriba su nombre de usuario"			
+				labelWidth: 90,
+				name:"username",	
+				placeholder: "Escriba el nombre de usuario",
+				invalidMessage: "Debe escribir un nombre de usuario",
+				validate:"isNotEmpty", validateEvent:"key",
+			}, 
+			{ // CONTRASEÑA /////////////////////////////////
+				view:"text", 
+				type: "password",
+				label: "Contraseña",
+				labelWidth: 150,
+				name:"password1",	
+				placeholder: "Escriba su contraseña",
+				invalidMessage: "Especifique una contraseña",
+				validate:"isNotEmpty", validateEvent:"key",
 			}, 
 			{
-				cols:[ 
-				{
-					view: "label", label: "Contraseña", width: 80
-				},
-				{
-					view:"button", 
-					label: "Cambiar contraseña",
-					click:function(){
-						webix.message('Cambiar contraseña');
-						$$("form_cambiar_pass").show();
-					} 						
-				}]
-			},			
+				view:"text", 
+				type: "password",
+				id:"password2",
+				label: "Repita contraseña",
+				labelWidth: 150,
+				//name:"password2",	
+				placeholder: "Vuelva a escribir su contraseña",
+				invalidMessage: "Confirme su contraseña",
+				validate:"isNotEmpty", validateEvent:"key",
+			}, // FIN DE CONTRASEÑA /////////////////////////////////			
 			{
 				cols:[ 
 				{},
 				{
 					view:"button", 
 					label: "Guardar",
-					type: "form"
+					type: "form",
+					click: function()
+					{
+						// PARA SACAR EL VALOR DE TRUE O FALSE
+						//webix.message("Validación de forma: "+ this.getFormView().validate());
+						var res = this.getFormView().validate();
+						
+						if (res)
+						{
+							webix.message({type:"default", text:"Campos en orden"});
+							var data = $$("form_configurar_usuario").getValues();
+							console.log(data);
+							webix.ajax().sync().post("<?= base_url('configuraciones/nuevo_Usuario')?>", data, function callback(res)
+							{
+								if (res > 0) 
+								{
+									$$("form_configurar_usuario").clear();
+									$$("form_configurar_usuario").clearValidation();
+									$$("window_config").hide();
+
+									$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
+									webix.alert("Usuario guardado con éxito: "+res);
+
+								}
+							});
+						}
+						//webix.message({type:"error", text:"Validación de forma: "+ this.getFormView().validate()}); 
+					}					
 				},
 				{
 					view:"button", 
-					label: "Cancelar",
-					type: "danger"	
-				}]
-			}]
-		});
-		// FIN DE FORM CONFIGURAR USUARIO
-
+					label: "Cancelar",					
+					click: function()
+					{
+						$$("form_configurar_usuario").clear();
+						$$("form_configurar_usuario").clearValidation();
+						$$("window_config").hide();
+					}
+				}] // FIN DE COLS DE BOTONES
+			}], // FIN DE ROWS DEL FORM
+			rules: {
+				$obj:function(data){					
+					//passwords must be equal
+					if (data.password1 != $$("password2").getValue()){
+						webix.message({type:"error", text:"Las contraseñas no coinciden"}); 
+						return false;
+					}
+					return true;
+				}
+			}
+		};// FIN DE FORM CONFIGURAR USUARIO
 
 
 
@@ -161,52 +255,103 @@
 
 
 		// FORM CAMBIAR CONTRASEÑA
-		webix.ui(
-		{
-			id: "form_cambiar_pass",
-			hidden: true,
+		var form_cambiar_contraseña = {
+			id: "form_cambiar_pass",			
 			width:500,
-			view: "form",
-			container: "cambiar_contraseña",			
-			rows:[
-			{
-				view:"label", label:"<b>Cambiar contraseña</b>"
-			},
+			view: "form",		
+			rows:[			
+			{ // CONTRASEÑA
+				view:"text", 
+				type: "password",
+				label: "Contraseña",
+				labelWidth: 150,
+				name:"password3",
+				validate:"isNotEmpty", validateEvent:"key",	
+				placeholder: "Escriba su contraseña nueva"
+			}, 
 			{
 				view:"text", 
-				label: "Nueva ",
-				
-				name:"usuario",	
-				placeholder: "Escriba su nueva contraseña"	
-			},
-			{
-				view:"text", 
-				label: "Repetir",
-				name:"repetir",	
-				placeholder: "Repita su nueva contraseña"	
-			},
+				type: "password",
+				label: "Repita contraseña",
+				labelWidth: 150,
+				name:"password4",	
+				validate:"isNotEmpty", validateEvent:"key",
+				placeholder: "Vuelva a escribir su contraseña"
+			}, // FIN DE CONTRASEÑA
 			{
 				cols:[ 
 				{},
 				{
 					view:"button", 
 					label: "Guardar",
-					type: "form"
+					type: "form",
+					click: function()
+					{
+						var res = this.getFormView().validate();
+						
+						if (res)
+						{
+							webix.message({type:"form", text:"Campos en orden"});	
+						}
+						
+					}
 				},
 				{
 					view:"button", 
 					label: "Cancelar",
-					type: "danger",
+					
 					click:function(){
 						
 						$$("form_cambiar_pass").clear();
-						$$("form_cambiar_pass").hide();
+						$$("window_change").hide();
 					} 
-				}]
-			}]
-		});
-		// FIN DE FORM CAMBIAR CONTRASEÑA
+				}] // FIN DE COLS DE BOTONES
+			}], // FIN DE ROWS DEL FORM
+			rules: {
+				$obj:function(data){
+					//password must not be empty
+					if (!data.password3){
+						webix.message("Especifique una contraseña");
+						return false;
+					}
+					//passwords must be equal
+					if (data.password4 != data.password3){
+						webix.message({type:"error", text:"Las contraseñas no coinciden"}); 
+						return false;
+					}
+					return true;
+				}
+			}
+		};// FIN DE FORM CAMBIAR CONTRASEÑA
 
+
+
+
+
+
+
+		// WINDOW PARA CONFIGURAR USUARIO
+		webix.ui(
+		{
+			id: "window_config",
+			view:"window", move:false,
+		    head:"Nuevo usuario", left:100, top:100, position: "center",
+			body:webix.copy(form_configurar),
+			modal: true		
+		});
+		// FIN DE WINDOW PARA CONFIGURAR USUARIO
+
+
+		// WINDOW PARA CAMBIAR CONTRASEÑA
+		webix.ui(
+		{
+			id: "window_change",
+			view:"window", move:false,
+		    head:"Cambiar contraseña", left:100, top:100, position: "center",
+			body:webix.copy(form_cambiar_contraseña),
+			modal: true		
+		});
+		// FIN DE WINDOW PARA CAMBIAR CONTRASEÑA
 
 
 
