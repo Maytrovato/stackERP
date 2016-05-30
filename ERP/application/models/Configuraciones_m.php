@@ -37,6 +37,7 @@ class Configuraciones_m extends CI_Model
 	}
 
 
+<<<<<<< HEAD
 	public function verificar_Usuario($username)
 	{
 		$this->db->select("COUNT(id) as res");
@@ -48,6 +49,8 @@ class Configuraciones_m extends CI_Model
 	}
 
 
+=======
+>>>>>>> origin/master
 	// Trabaja recibiendo el field que se modificó y su nuevo valor
 	// Uno por uno, no el arreglo completo del ROW
 	public function actualizar_Usuario($id, $data)

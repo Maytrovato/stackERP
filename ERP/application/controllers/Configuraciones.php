@@ -106,6 +106,25 @@ class Configuraciones extends CI_Controller
 		return $result;
 	}
 
+	public function editar_Usuario()
+	{
+		$id = $this->input->post("id");
+		$field = $this->input->post("field");
+		$value = $this->input->post("value");
+		
+		$data = array($field => $value);
+		echo json_encode($this->configuraciones_m->actualizar_Usuario($id, $data));				
+	}
+
+
+	public function editar_Password()
+	{
+		$id = $this->input->post("id");
+		$pass = $this->input->post("password");
+
+		$data = array("password" => md5($pass) );
+		echo json_encode($this->configuraciones_m->actualizar_Password($id, $data));			
+	}
 
 	public function editar_Password()
 	{
