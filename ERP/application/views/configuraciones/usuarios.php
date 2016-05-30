@@ -4,7 +4,7 @@
 		<h1>Usuarios</h1>
 		
 		<div id="opciones"></div>
-		<div id="table_usuarios"></div>
+		<div id="table_usuarios" ></div>
 		<div id="configurar_usuario" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
 		<div id="cambiar_contraseña" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
 		
@@ -38,8 +38,7 @@
 				click: function()
 				{
 					$$("window_config").show();
-				}
-				
+				}				
 			},
 			{
 				view: "button", 
@@ -52,11 +51,8 @@
 				click: function()
 				{	
 					$$("window_change").show();
-				}
-				
-			},
-
-			]
+				}				
+			}] // FIN DE COLS DE OPCIONES
 		}); // FIN DE OPCIONES DE AGREGAR USUARIOS
 
 		
@@ -76,23 +72,66 @@
 			select:"row",
 			editable:true,
 			editaction:"dblclick",
-			autoheight:true,
+			autoheight:false,
+			height: 450,			
 			columns: [
-			{ id: "id", header: "No", width: 50},
+			{ id: "id", header:["No" , {content:"textFilter"}], width: 50},
 			{ id: "Empleado", header: ["Empleado", {content:"textFilter"}], width: 200, fillspace: true},
-			{ id: "Usuario", editor:"popup", header: ["Usuario", {content:"textFilter"}], width: 200, fillspace: true},
+			{ id: "username", editor:"text", header: ["Usuario", {content:"textFilter"}], width: 200, fillspace: true},
 			//{ id: "Usuario", editor:"richselect", options: usu, header: ["Usuario", {content:"textFilter"}], width: 200, fillspace: true},
-			{ id: "Perfil", editor:"richselect", options: perfiles, header: ["Perfil", {content:"selectFilter"}], width: 200},
-			{ id: "Sucursal",  header: ["Sucursal", {content:"selectFilter"}], width: 200, fillspace: true },
-			{ id: "Estado", editor:"richselect", options:  ["0","1"], header: ["Estado", {content: "selectFilter"}], width: 100}
+			{ id: "id_perfil", editor:"richselect", options: perfiles, header: ["Perfil", {content:"selectFilter"}], width: 200},
+			{ id: "id_sucursal",  header: ["Sucursal", {content:"selectFilter"}], width: 200, fillspace: true },
+			{ id: "status", editor:"richselect", options:  ["0","1"], header: ["Estado", {content: "selectFilter"}], width: 100}
 			],
 			on:{
 					onSelectChange:function(){
 						var text = "Selected: "+tabla_usuarios.getSelectedId(true).join();
-						$$("button_change_pass").enable();
-						webix.message(text);
-					}
+						$$("button_change_pass").enable();						
+						//webix.message("ID" +text);
+					},
+					onAfterEditStop:function(state, editor){
+						// SÍ SE MODIFICÓ 
+						if(state.value != state.old)
+						{
+							if (state.value != "")
+							{
+								var data = {id: editor.row, field: editor.column, value: state.value };
+						        //webix.message("El valor ha cambiado");
+						        //webix.message("El campo es: " + editor.column);
+						        //webix.message("El valor nuevo: " + state.value);
+						        //webix.message("El ID es: " + editor.row); 
+						        //console.log(editor);
+						        webix.ajax().sync().post("<?= base_url('configuraciones/editar_Usuario')?>", data, function callback(res)
+								{
+									if (res > 0) 
+									{
+										$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
+										webix.message("Cambios hechos con éxito ");
+									}
+									else if (res <= 0) // NO TRAJO ID DE UNO NUEVO, YA EXISTE
+									{
+										webix.alert({
+										    title: "Error",
+										    text: "El usuario ya existe",
+										    type:"alert-error"
+										});
+										$$("table_usuarios").addRowCss(editor.row, "webix_invalid");
+										$$("table_usuarios").addCellCss(editor.row, "username", "webix_invalid_cell");
+									}
+								}); // FIN DE AJAX
+						    }
+						    else 
+						    {
+						    	webix.message({type:"error", text: "El campo no puede quedar vacio"});
+						    }
+					    }  
+		    		},
 				},
+				rules:{
+		        	username:function(val){
+						return webix.rules.isNotEmpty(val.trim());
+					},					
+		    	},
 			url: "<?= base_url('configuraciones/get_Usuarios');?>"
 		}); // FIN DE TABLA USUARIOS
 
@@ -204,9 +243,9 @@
 						
 						if (res)
 						{
-							webix.message({type:"default", text:"Campos en orden"});
+							//webix.message({type:"default", text:"Campos en orden"});
 							var data = $$("form_configurar_usuario").getValues();
-							console.log(data);
+							//console.log(data);
 							webix.ajax().sync().post("<?= base_url('configuraciones/nuevo_Usuario')?>", data, function callback(res)
 							{
 								if (res > 0) 
@@ -216,8 +255,19 @@
 									$$("window_config").hide();
 
 									$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
-									webix.alert("Usuario guardado con éxito: "+res);
-
+									//webix.alert("Usuario guardado con éxito: ");
+									webix.alert({
+									    title: "Éxito",
+									    text: "Usuario guardado con éxito",									    
+									});
+								}
+								else if (res <= 0) // NO TRAJO ID DE UNO NUEVO, YA EXISTE
+								{
+									webix.alert({
+									    title: "Error",
+									    text: "El usuario ya existe",
+									    type:"alert-error"
+									});
 								}
 							});
 						}
@@ -262,6 +312,7 @@
 			rows:[			
 			{ // CONTRASEÑA
 				view:"text", 
+				id: "change_password",
 				type: "password",
 				label: "Contraseña",
 				labelWidth: 150,
@@ -289,11 +340,26 @@
 					{
 						var res = this.getFormView().validate();
 						
+						// SI LAS CONTRASEÑAS COINCIDEN
 						if (res)
 						{
-							webix.message({type:"form", text:"Campos en orden"});	
-						}
-						
+							//webix.message({type:"form", text:"Campos en orden"});
+							var id = tabla_usuarios.getSelectedId(true).join();
+
+							var data = {id: id, password: $$("change_password").getValue() };
+
+							webix.ajax().sync().post("<?= base_url('configuraciones/editar_Password')?>", data, function callback(res)
+							{
+								if (res > 0) 
+								{
+									$$("form_cambiar_pass").clear();
+									$$("form_cambiar_pass").clearValidation();
+									$$("window_change").hide();
+									//$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
+									webix.alert("Contraseña renovada con éxito ");
+								}
+							});
+						}						
 					}
 				},
 				{

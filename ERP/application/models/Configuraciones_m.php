@@ -17,6 +17,7 @@ class Configuraciones_m extends CI_Model
 		return $query;
 	}
 
+
 	function traer_Perfiles()
 	{		
 		//$this->db->select('id, CONCAT(nombre, " ", a_paterno, " ", a_materno) AS empleados');
@@ -28,12 +29,6 @@ class Configuraciones_m extends CI_Model
 		return $query;
 	}
 
-	/*function traer_Empleados2()
-	{
-		$this->db->select("nombre");
-		$this->db->from('empleados');		
-		return $this->db->get()->result();
-	}  */
 
 	public function insertar_Usuario($data)
 	{
@@ -42,22 +37,51 @@ class Configuraciones_m extends CI_Model
 	}
 
 
+	public function verificar_Usuario($username)
+	{
+		$this->db->select("COUNT(id) as res");
+		$this->db->from("usuarios");
+		$this->db->where('username', $username);
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+
+
+	// Trabaja recibiendo el field que se modificó y su nuevo valor
+	// Uno por uno, no el arreglo completo del ROW
+	public function actualizar_Usuario($id, $data)
+	{
+		$this->db->where('id', $id);
+		$this->db->update('usuarios', $data); 
+
+		return $this->db->affected_rows();
+	}
+
+	public function actualizar_Password($id, $data)
+	{
+		$this->db->where('id', $id);
+		$this->db->update('usuarios', $data); 
+
+		return $this->db->affected_rows();
+	}
+
+
 	function traer_Usuarios()
 	{
 		$this->db->select("usuarios.id");
 		$this->db->select("CONCAT(empleados.nombre, ' ', empleados.a_paterno, ' ', empleados.a_materno) as Empleado");
-		$this->db->select("username AS Usuario");
-		$this->db->select("usuarios.id_perfil AS 'Perfil'");
-		$this->db->select("id_sucursal AS 'Sucursal'");
-		$this->db->select("usuarios.status AS 'Estado'");
+		$this->db->select("username");
+		$this->db->select("usuarios.id_perfil AS 'id_perfil'");
+		$this->db->select("id_sucursal AS 'id_sucursal'");
+		$this->db->select("usuarios.status AS 'status'");
 		
 		$this->db->from("usuarios");
 
 		$this->db->join("perfiles", "usuarios.id_perfil = perfiles.id");
 		$this->db->join("empleados", "usuarios.id_empleado = empleados.id");
 		
-		echo $this->db->last_query();		
-
+		$this->db->order_by('usuarios.id', 'asc'); 
 		$query = $this->db->get();
 
 		return $query->result();

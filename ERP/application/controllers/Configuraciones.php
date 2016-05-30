@@ -21,6 +21,9 @@ class Configuraciones extends CI_Controller
 	}
 
 
+
+
+
 	// VISTA DE USUARIOS
 	public function usuarios()
 	{		
@@ -40,20 +43,84 @@ class Configuraciones extends CI_Controller
 
 	public function nuevo_Usuario()
 	{
+		$username = $this->input->post("username");
 
-		$data = array('id_empleado'=> $this->input->post("empleado"),
-					  'id_perfil' => $this->input->post("perfil"),
-					  'id_sucursal' => $this->input->post("sucursal"),
-					  'username' => $this->input->post("username"), 
-					  'password' => md5($this->input->post("password1"))
-			);
+		$existe = $this->verificar_existencia_usuario($username);
 
-		echo json_encode($this->configuraciones_m->insertar_Usuario($data));
+		
+		//print_r($existe);
+
+		if ($existe == 0) // NO EXISTE EL USUARIO
+		{
+			$data = array('id_empleado'=> $this->input->post("empleado"),
+						  'id_perfil' => $this->input->post("perfil"),
+						  'id_sucursal' => $this->input->post("sucursal"),
+						  'username' => $username, 
+						  'password' => md5($this->input->post("password1"))
+				);
+
+			echo json_encode($this->configuraciones_m->insertar_Usuario($data));			
+		}
+		else if ($existe > 0)// EXISTE EL USUARIO
+		{
+			echo 0;
+		}
+	}
+
+	public function editar_Usuario()
+	{
+		$id = $this->input->post("id");
+		$field = $this->input->post("field");		
+		$value = $this->input->post("value");
+
+		if ($field == "username")
+		{
+			$existe = $this->verificar_existencia_usuario($value);
+
+			if ($existe == 0)  // NO EXISTE EL USUARIO
+			{
+				$data = array($field => $value);
+				echo json_encode($this->configuraciones_m->actualizar_Usuario($id, $data));
+			}
+			else if ($existe > 0) // EXISTE EL USUARIO
+			{
+				echo 0;
+			}
+		}
+		else 
+		{
+			$data = array($field => $value);
+			echo json_encode($this->configuraciones_m->actualizar_Usuario($id, $data));
+		}
+
+	}
+
+	public function verificar_existencia_usuario($username)
+	{
+		$results = $this->configuraciones_m->verificar_Usuario($username);
+
+		foreach($results as $res)
+		{
+			$result = $res->res;
+		}
+		return $result;
 	}
 
 
+	public function editar_Password()
+	{
+		$id = $this->input->post("id");
+		$pass = $this->input->post("password");
+
+		$data = array("password" => md5($pass) );
+		echo json_encode($this->configuraciones_m->actualizar_Password($id, $data));			
+	}
+
 
 	// FIN DE VISTA DE USUARIOS
+
+
+
 
 
 
