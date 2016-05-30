@@ -16,7 +16,7 @@
 	webix.ready(function()
 	{
 		webix.markup.init();
-
+		// ESTA ES UNA NUEVA LINEA
 
 		//var perfiles = "<?= base_url('configuraciones/getPerfiles')?>";
 		var perfiles = <?= $perfiles?>;
@@ -91,25 +91,18 @@
 					},
 					onAfterEditStop:function(state, editor){
 						// SÍ SE MODIFICÓ 
+						console.log(state);
+						console.log(editor);
 						if(state.value != state.old)
 						{
 							if (state.value != "")
 							{
 								var data = {id: editor.row, field: editor.column, value: state.value };
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 						        //webix.message("El valor ha cambiado");
 						        //webix.message("El campo es: " + editor.column);
 						        //webix.message("El valor nuevo: " + state.value);
 						        //webix.message("El ID es: " + editor.row); 
 						        //console.log(editor);
-<<<<<<< HEAD
-=======
-						        
-
->>>>>>> origin/master
 						        webix.ajax().sync().post("<?= base_url('configuraciones/editar_Usuario')?>", data, function callback(res)
 								{
 									if (res > 0) 
@@ -117,7 +110,6 @@
 										$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
 										webix.message("Cambios hechos con éxito ");
 									}
-<<<<<<< HEAD
 									else if (res <= 0) // NO TRAJO ID DE UNO NUEVO, YA EXISTE
 									{
 										webix.alert({
@@ -128,8 +120,6 @@
 										$$("table_usuarios").addRowCss(editor.row, "webix_invalid");
 										$$("table_usuarios").addCellCss(editor.row, "username", "webix_invalid_cell");
 									}
-=======
->>>>>>> origin/master
 								}); // FIN DE AJAX
 						    }
 						    else 
@@ -267,7 +257,6 @@
 									$$("window_config").hide();
 
 									$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
-<<<<<<< HEAD
 									//webix.alert("Usuario guardado con éxito: ");
 									webix.alert({
 									    title: "Éxito",
@@ -281,10 +270,6 @@
 									    text: "El usuario ya existe",
 									    type:"alert-error"
 									});
-=======
-									webix.alert("Usuario guardado con éxito: ");
-
->>>>>>> origin/master
 								}
 							});
 						}
@@ -372,23 +357,11 @@
 									$$("form_cambiar_pass").clear();
 									$$("form_cambiar_pass").clearValidation();
 									$$("window_change").hide();
-<<<<<<< HEAD
 									//$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
 									webix.alert("Contraseña renovada con éxito ");
 								}
 							});
 						}						
-=======
-
-									//$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
-									webix.alert("Contraseña renovada con éxito ");
-
-								}
-							});
-
-						}
-						
->>>>>>> origin/master
 					}
 				},
 				{
