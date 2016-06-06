@@ -70,7 +70,7 @@
 		]},
 		{id: "produccion", icon: "area-chart", value:"Producción", data:[
 			{ id: "servicios", value: "Servicios", href:"<?= base_url('produccion/servicios');?>"},
-			{ id: "productos", value: "Productos"},
+			{ id: "productos", value: "Productos", href:"<?= base_url('produccion/productos');?>"},
 			{ id: "almacen", value: "Almacen"},
 			{ id: "p_reportes", value: "Reportes"},
 			{ id: "p_estadisticas", value: "Estadisticas"},

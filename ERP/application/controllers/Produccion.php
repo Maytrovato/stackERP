@@ -28,9 +28,11 @@ class Produccion extends CI_Controller {
 		$data = $this->Produccion_m->servicios();
 		$this->json($data);
 	}
-	public function saveServicios(){
+	public function save(){
 		$data =  $this->input->post();
-		$respuesta = $this->Produccion_m->guardar($data);
+		$tabla = $data['tabla'];
+		unset($data['tabla']);
+		$respuesta = $this->Produccion_m->guardar($data,$tabla);
 		$this->json($respuesta);
 	}
 	public function productos()
@@ -38,6 +40,11 @@ class Produccion extends CI_Controller {
 		$this->load->view("header");
 		$this->load->view('produccion/productos');
 	}
+	public function getProductos(){
+		$data = $this->Produccion_m->productos();
+		$this->json($data);
+	}
+
 	function json($data){
 		header("Content-type: application/json; charset-utf-8");
 		echo json_encode($data);

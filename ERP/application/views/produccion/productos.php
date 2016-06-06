@@ -1,6 +1,6 @@
 <body>
 	<div id="workplace">
-		<h1>Servicios</h1>
+		<h1>Productos</h1>
 		<div id="add"></div>
 		<div id="tabla"></div>
 		<div id="pager"></div>
@@ -17,7 +17,7 @@
 		editaction:"dblclick",
 		autoheight:true,
 		select:'row',
-		url:'<?=base_url('produccion/getServicios')?>',
+		url:'<?=base_url('produccion/getProductos')?>',
 	    columns:[
 	        { id:"id",width:50,header:["No",{content:"textFilter"}]},
 	        { id:"nombre",editor:"text",header:["Nombre",{content:"textFilter"}],fillspace:true},
@@ -35,20 +35,20 @@
 	    on:{
     		onAfterEditStop:function(state){
 				var data = this.getItem(aid);
-				data.tabla = 'servicios';
+				data.tabla = 'productos';
 				if(state.value != state.old){
 					if(this.validate()){
 						webix.ajax().post('<?= base_url('produccion/save')?>',data,function(result){
 							var resp  = JSON.parse(result)
 							if(resp.status){
 								webix.message({type:"default", text:"Guardado correcto"});
-								$$("dt_serv").load('<?=base_url('produccion/getServicios')?>');
+								$$("dt_serv").load('<?=base_url('produccion/getProductos')?>');
 							}else{
 								webix.message({type:"error", text:"Error al guardar"});
 							}
 						});
 					}else {webix.message({type:"error", text:"error campo vacio"});
-							$$("dt_serv").load('<?=base_url('produccion/getServicios')?>');
+							$$("dt_serv").load('<?=base_url('produccion/getProductos')?>');
 							this.clearValidation();
 					}
 				}
@@ -112,12 +112,12 @@ webix.ui({
         });
 function guardar(){
 	var data = $$("frm").getValues();
-	data.tabla = 'servicios';
-	webix.ajax().post('<?= base_url('produccion/saveServicios')?>',data,function(result){
+	data.tabla = 'productos';
+	webix.ajax().post('<?= base_url('produccion/save')?>',data,function(result){
         var resp  = JSON.parse(result)
         if(resp.status){    
             webix.message("Guardado");
-            $$("dt_serv").load('<?=base_url('produccion/getServicios')?>');
+            $$("dt_serv").load('<?=base_url('produccion/getProductos')?>');
             $$("win2").hide(); //hide window
             $$("frm").clearValidation();
             $$("frm").clear();
