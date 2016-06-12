@@ -37,7 +37,6 @@ class Configuraciones_m extends CI_Model
 	}
 
 
-<<<<<<< HEAD
 	public function verificar_Usuario($username)
 	{
 		$this->db->select("COUNT(id) as res");
@@ -49,8 +48,6 @@ class Configuraciones_m extends CI_Model
 	}
 
 
-=======
->>>>>>> origin/master
 	// Trabaja recibiendo el field que se modificó y su nuevo valor
 	// Uno por uno, no el arreglo completo del ROW
 	public function actualizar_Usuario($id, $data)
@@ -91,5 +88,67 @@ class Configuraciones_m extends CI_Model
 	}
 
 	// FIN DE FUNCIONES PARA USUARIOS //////////////////////////////////////////////
+
+
+
+
+
+	// FUNCIONES PARA PERMISOS //////////////////////////////////////////////
+
+	public function traer_Permisos()
+	{
+		$this->db->select("*");
+		$this->db->from("perfiles");
+
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+
+	public function traer_Perfiles_Campos()
+	{
+		$this->db->select("COLUMN_NAME");
+		$this->db->from("INFORMATION_SCHEMA.COLUMNS");
+
+		$this->db->where('TABLE_SCHEMA', "stackerp");
+		$this->db->where('TABLE_NAME', "perfiles");
+		$this->db->where('COLUMN_NAME !=', "id");
+		$this->db->where('COLUMN_NAME !=', "perfil");
+
+		$query = $this->db->get();
+		$query = $query->result();
+
+		return $query;
+	}
+
+	// Trabaja recibiendo el field que se modificó y su nuevo valor
+	// Uno por uno, no el arreglo completo del ROW
+	public function actualizar_Perfil($id, $data)
+	{
+		$this->db->where('id', $id);
+		$this->db->update('perfiles', $data); 
+
+		return $this->db->affected_rows();
+	}
+
+	public function insertar_Perfil($data)
+	{
+		$this->db->insert('perfiles',$data);
+		return $this->db->insert_id();
+	}
+
+	public function verificar_Perfil($perfil)
+	{
+		$this->db->select("COUNT(id) as res");
+		$this->db->from("perfiles");
+		$this->db->where('perfil', $perfil);
+		$query = $this->db->get();
+
+		return $query->result();
+	}
+
+
+	// FIN DE FUNCIONES PARA PERMISOS //////////////////////////////////////////////
+
 	
 }

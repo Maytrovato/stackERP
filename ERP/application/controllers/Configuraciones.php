@@ -24,7 +24,7 @@ class Configuraciones extends CI_Controller
 
 
 
-	// VISTA DE USUARIOS
+	// VISTA DE USUARIOS  ///////////////////////////////////////////////////////////////////////////
 	public function usuarios()
 	{		
 		$data["empleados"] = json_encode($this->configuraciones_m->traer_Empleados());
@@ -92,7 +92,6 @@ class Configuraciones extends CI_Controller
 			$data = array($field => $value);
 			echo json_encode($this->configuraciones_m->actualizar_Usuario($id, $data));
 		}
-
 	}
 
 	public function verificar_existencia_usuario($username)
@@ -106,37 +105,80 @@ class Configuraciones extends CI_Controller
 		return $result;
 	}
 
-	public function editar_Usuario()
+
+	public function editar_Password()
 	{
 		$id = $this->input->post("id");
-		$field = $this->input->post("field");
+		$pass = $this->input->post("password");
+
+		$data = array("password" => md5($pass) );
+		echo json_encode($this->configuraciones_m->actualizar_Password($id, $data));			
+	}
+
+	// FIN DE VISTA DE USUARIOS  ////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+	// VISTA DE PERFILES  ///////////////////////////////////////////////////////////////////////////
+	public function permisos()
+	{		
+		$data["perfiles"] = $this->configuraciones_m->traer_Perfiles_Campos();	
+		$data["permisos"] = $this->configuraciones_m->traer_Permisos();	
+
+		//print_r($data["perfiles"]);
+
+		$this->load->view("header");
+		$this->load->view('configuraciones/permisos', $data);
+	}
+
+	// FUNCIÓN PARA LLENAR LA TABLA CON LOS PERFILES
+	public function get_Perfiles()
+	{
+		echo json_encode($this->configuraciones_m->traer_Permisos());
+	}
+
+	public function editar_Perfil()
+	{
+		$id = $this->input->post("id");
+		$field = $this->input->post("field");		
 		$value = $this->input->post("value");
 		
 		$data = array($field => $value);
-		echo json_encode($this->configuraciones_m->actualizar_Usuario($id, $data));				
+		echo json_encode($this->configuraciones_m->actualizar_Perfil($id, $data));		
 	}
 
-
-	public function editar_Password()
+	public function nuevo_Perfil()
 	{
-		$id = $this->input->post("id");
-		$pass = $this->input->post("password");
+		$perfil = $this->input->post("perfil");
+		$existe = $this->verificar_Existencia_Perfil($perfil);
 
-		$data = array("password" => md5($pass) );
-		echo json_encode($this->configuraciones_m->actualizar_Password($id, $data));			
+		if ($existe == 0) // NO EXISTE EL USUARIO
+		{
+			$data = array('perfil'=> $perfil);
+			echo json_encode($this->configuraciones_m->insertar_Perfil($data));			
+		}
+		else if ($existe > 0)// EXISTE EL USUARIO
+		{
+			echo 0;
+		}
 	}
 
-	public function editar_Password()
+	public function verificar_Existencia_Perfil($perfil)
 	{
-		$id = $this->input->post("id");
-		$pass = $this->input->post("password");
+		$results = $this->configuraciones_m->verificar_Perfil($perfil);
 
-		$data = array("password" => md5($pass) );
-		echo json_encode($this->configuraciones_m->actualizar_Password($id, $data));			
+		foreach($results as $res)
+		{
+			$result = $res->res;
+		}
+		return $result;
 	}
 
 
-	// FIN DE VISTA DE USUARIOS
+	// FIN DE VISTA DE USUARIOS  ////////////////////////////////////////////////////////////////////
 
 
 
@@ -144,12 +186,6 @@ class Configuraciones extends CI_Controller
 
 
 
-
-	public function permisos()
-	{		
-		$this->load->view("header");
-		$this->load->view('configuraciones/permisos');
-	}
 
 	public function json($data)
 	{

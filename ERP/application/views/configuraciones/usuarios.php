@@ -3,16 +3,24 @@
 		
 		<h1>Usuarios</h1>
 		
+		<!-- Botones de menú -->
 		<div id="opciones"></div>
+
+		<!-- Tabla -->
 		<div id="table_usuarios" ></div>
+
+		<!-- Dialog de Nuevo Usuario -->
 		<div id="configurar_usuario" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
+
+		<!-- Dialog para cambiar Pass -->
 		<div id="cambiar_contraseña" style="float: left; box-shadow: 0px 1px 5px 0px #888888; margin:20px;"></div>
-		
-	
+
 
 	</div>
 </body>
 <script type="text/javascript">
+	
+
 	webix.ready(function()
 	{
 		webix.markup.init();
@@ -320,7 +328,8 @@
 				labelWidth: 150,
 				name:"password3",
 				validate:"isNotEmpty", validateEvent:"key",	
-				placeholder: "Escriba su contraseña nueva"
+				placeholder: "Escriba su contraseña nueva",
+				invalidMessage: "Especifique una contraseña",
 			}, 
 			{
 				view:"text", 
@@ -329,7 +338,8 @@
 				labelWidth: 150,
 				name:"password4",	
 				validate:"isNotEmpty", validateEvent:"key",
-				placeholder: "Vuelva a escribir su contraseña"
+				placeholder: "Vuelva a escribir su contraseña",
+				invalidMessage: "Confirme su contraseña",
 			}, // FIN DE CONTRASEÑA
 			{
 				cols:[ 
@@ -358,7 +368,11 @@
 									$$("form_cambiar_pass").clearValidation();
 									$$("window_change").hide();
 									//$$('table_usuarios').load("<?= base_url('configuraciones/get_Usuarios');?>");
-									webix.alert("Contraseña renovada con éxito ");
+									webix.alert({
+									    title: "Éxito",
+									    text: "Contraseña renovada con éxito ",									    
+									});
+									
 								}
 							});
 						}						
